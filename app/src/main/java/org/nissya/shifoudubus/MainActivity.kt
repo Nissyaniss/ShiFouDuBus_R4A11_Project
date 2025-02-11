@@ -1,5 +1,6 @@
 package org.nissya.shifoudubus
 
+import android.content.Intent
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -64,7 +65,7 @@ fun AppNavigation() {
             Home(navController = navController)
         }
         composable("game") {
-//            Game(navController = navController)
+            Game(navController = navController)
         }
     }
 }

@@ -13,9 +13,9 @@
         android:theme="@style/Theme.ShiFouDuBus"
         tools:targetApi="31">
         <activity
-            android:name=".MainActivity2"
+            android:name=".Game"
             android:exported="false"
-            android:label="@string/title_activity_main2"
+            android:label="@string/title_activity_game"
             android:theme="@style/Theme.ShiFouDuBus" />
         <activity
             android:name=".MainActivity"
