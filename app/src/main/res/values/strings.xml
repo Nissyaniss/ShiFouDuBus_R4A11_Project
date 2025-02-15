@@ -3,4 +3,7 @@
     <string name="gameTitle">ShiFouDuBus</string>
     <string name="play">Jouer</string>
     <string name="title_activity_game">Game</string>
+    <string name="welcome">Bienvenue</string>
+    <string name="shake_instruction">agite ton téléphone</string>
+    <string name="shake">Secousses :</string>
 </resources>
