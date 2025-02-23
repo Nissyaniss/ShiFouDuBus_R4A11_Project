@@ -1,5 +1,6 @@
 package org.nissya.shifoudubus
 
+import android.annotation.SuppressLint
 import android.hardware.Sensor
 import android.hardware.SensorEvent
 import android.hardware.SensorEventListener
@@ -18,13 +19,20 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import org.nissya.shifoudubus.ui.theme.ShiFouDuBusTheme
-import java.text.SimpleDateFormat
-import java.util.*
+
+class ShakeViewModel : ViewModel() {
+    var shakeCount by mutableStateOf(0)
+    var x by mutableStateOf(0f)
+    var y by mutableStateOf(0f)
+    var z by mutableStateOf(0f)
+}
 
 class MainActivity : ComponentActivity() {
     private lateinit var sensorManager: SensorManager
@@ -39,45 +47,46 @@ class MainActivity : ComponentActivity() {
 
         setContent {
             ShiFouDuBusTheme {
-                var shakeCount by remember { mutableStateOf(0) }
+                val viewModel: ShakeViewModel = viewModel()
 
+                // Gestion du capteur avec LaunchedEffect
+                LaunchedEffect(Unit) {
+                    val accelerometer = sensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER)
+                    if (accelerometer != null) {
+                        sensorEventListener = object : SensorEventListener {
+                            override fun onSensorChanged(event: SensorEvent) {
+                                viewModel.x = event.values[0]
+                                viewModel.y = event.values[1]
+                                viewModel.z = event.values[2]
+                                val acceleration = Math.sqrt((viewModel.x * viewModel.x + viewModel.y * viewModel.y + viewModel.z * viewModel.z).toDouble())
 
-                sensorEventListener = object : SensorEventListener {
-                    override fun onSensorChanged(event: SensorEvent) {
-                        val x = event.values[0]
-                        val y = event.values[1]
-                        val z = event.values[2]
-                        val acceleration = Math.sqrt((x * x + y * y + z * z).toDouble())
+                                val currentTime = System.currentTimeMillis()
+                                if (acceleration > 50 && currentTime - lastShakeTime > 300) {
+                                    lastShakeTime = currentTime
+                                    viewModel.shakeCount += 1
+                                }
+                            }
 
-                        val currentTime = System.currentTimeMillis()
-                        if (acceleration > 50 && currentTime - lastShakeTime > 300) {
-                            lastShakeTime = currentTime
-                            shakeCount += 1
-
-
+                            override fun onAccuracyChanged(sensor: Sensor?, accuracy: Int) {}
                         }
+
+                        sensorManager.registerListener(
+                            sensorEventListener,
+                            accelerometer,
+                            SensorManager.SENSOR_DELAY_UI
+                        )
                     }
-
-                    override fun onAccuracyChanged(sensor: Sensor?, accuracy: Int) {}
                 }
 
-                val accelerometer = sensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER)
-                if (accelerometer != null) {
-                    sensorManager.registerListener(
-                        sensorEventListener,
-                        accelerometer,
-                        SensorManager.SENSOR_DELAY_UI
-                    )
+                DisposableEffect(Unit) {
+                    onDispose {
+                        sensorManager.unregisterListener(sensorEventListener)
+                    }
                 }
 
-                AppNavigation(shakeCount)
+                AppNavigation(viewModel)
             }
         }
-    }
-
-    override fun onDestroy() {
-        super.onDestroy()
-        sensorManager.unregisterListener(sensorEventListener)
     }
 }
 
@@ -101,8 +110,9 @@ fun Home(navController: NavController) {
     }
 }
 
+@SuppressLint("DefaultLocale")
 @Composable
-fun Game(navController: NavController, shakeDetected: Int) {
+fun Game(navController: NavController, viewModel: ShakeViewModel) {
     Column(
         modifier = Modifier.fillMaxSize(),
         verticalArrangement = Arrangement.Center,
@@ -121,20 +131,27 @@ fun Game(navController: NavController, shakeDetected: Int) {
         )
         Spacer(modifier = Modifier.height(16.dp))
         Text(
-            text = stringResource(R.string.shake)  + shakeDetected,
+            text = stringResource(R.string.shake) + viewModel.shakeCount,
             fontSize = 20.sp,
             fontWeight = FontWeight.Bold
         )
-
+        Spacer(modifier = Modifier.height(16.dp))
+        Text(
+            text = stringResource(R.string.x) + String.format("%.1f", viewModel.x) + " "+
+                    stringResource(R.string.y) + String.format("%.1f", viewModel.y) + " "+
+                    stringResource(R.string.z) + String.format("%.1f", viewModel.z),
+            fontSize = 20.sp,
+            fontWeight = FontWeight.Bold
+        )
     }
 }
 
 @Composable
-fun AppNavigation(shakeDetected: Int) {
+fun AppNavigation(viewModel: ShakeViewModel) {
     val navController = rememberNavController()
 
     NavHost(navController = navController, startDestination = "home") {
         composable("home") { Home(navController) }
-        composable("game") { Game(navController = navController, shakeDetected = shakeDetected) }
+        composable("game") { Game(navController = navController, viewModel = viewModel) }
     }
 }

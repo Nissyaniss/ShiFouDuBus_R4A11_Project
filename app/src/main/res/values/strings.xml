@@ -6,4 +6,7 @@
     <string name="welcome">Bienvenue</string>
     <string name="shake_instruction">agite ton téléphone</string>
     <string name="shake">Secousses :</string>
+    <string name="x"> x :</string>
+    <string name="y"> y :</string>
+    <string name="z"> z :</string>
 </resources>
