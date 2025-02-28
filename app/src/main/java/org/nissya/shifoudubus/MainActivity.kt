@@ -1,20 +1,26 @@
 package org.nissya.shifoudubus
 
 import android.annotation.SuppressLint
+import android.graphics.BitmapFactory
 import android.hardware.Sensor
 import android.hardware.SensorEvent
 import android.hardware.SensorEventListener
 import android.hardware.SensorManager
+import android.media.MediaPlayer
 import android.os.Bundle
+import android.widget.ImageView
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
+import androidx.compose.foundation.Image
+
 import androidx.compose.foundation.layout.*
 import androidx.compose.material3.Button
 import androidx.compose.material3.Text
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
@@ -27,11 +33,13 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import org.nissya.shifoudubus.ui.theme.ShiFouDuBusTheme
 
+
 class ShakeViewModel : ViewModel() {
     var shakeCount by mutableStateOf(0)
     var x by mutableStateOf(0f)
     var y by mutableStateOf(0f)
     var z by mutableStateOf(0f)
+    var image by mutableStateOf(R.drawable.squidgame)
 }
 
 class MainActivity : ComponentActivity() {
@@ -41,6 +49,15 @@ class MainActivity : ComponentActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        val mediaPlayer = MediaPlayer.create(this,R.raw.welcome)
+        mediaPlayer?.start()
+        val mediaPlayerPierre = MediaPlayer.create(this,R.raw.pierre)
+        val mediaPlayerFeuille = MediaPlayer.create(this,R.raw.feuille)
+        val mediaPlayerCiseaux = MediaPlayer.create(this,R.raw.ciseaux)
+        val mediaPlayerMusique = MediaPlayer.create(this,R.raw.musique)
+        mediaPlayerMusique.isLooping=true
+        mediaPlayerMusique.setVolume(0.1f, 0.1f)
+
         enableEdgeToEdge()
 
         sensorManager = getSystemService(SENSOR_SERVICE) as SensorManager
@@ -52,6 +69,7 @@ class MainActivity : ComponentActivity() {
                 // Gestion du capteur avec LaunchedEffect
                 LaunchedEffect(Unit) {
                     val accelerometer = sensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER)
+                    mediaPlayerMusique?.start()
                     if (accelerometer != null) {
                         sensorEventListener = object : SensorEventListener {
                             override fun onSensorChanged(event: SensorEvent) {
@@ -64,6 +82,29 @@ class MainActivity : ComponentActivity() {
                                 if (acceleration > 50 && currentTime - lastShakeTime > 300) {
                                     lastShakeTime = currentTime
                                     viewModel.shakeCount += 1
+                                    if (viewModel.shakeCount==1) {
+
+                                        mediaPlayerPierre?.start()
+                                    }else if (viewModel.shakeCount==2){
+                                        mediaPlayerFeuille?.start()
+
+                                    }
+
+                                    else if (viewModel.shakeCount==3){
+                                        val randomNumber =(1..3).random()
+                                        mediaPlayerCiseaux?.start()
+                                        if (randomNumber==1){
+                                            viewModel.image = R.drawable.cacaillou
+                                        }
+                                        else if (randomNumber==2){
+                                            viewModel.image = R.drawable.arbre
+                                        }
+                                        else if (randomNumber==3){
+                                           viewModel.image = R.drawable.ciseaux
+                                        }
+                                        viewModel.shakeCount=0
+
+                                    }
                                 }
                             }
 
@@ -107,6 +148,7 @@ fun Home(navController: NavController) {
             },
             modifier = Modifier.padding(top = 50.dp)
         ) { Text(text = stringResource(R.string.play)) }
+
     }
 }
 
@@ -143,6 +185,11 @@ fun Game(navController: NavController, viewModel: ShakeViewModel) {
             fontSize = 20.sp,
             fontWeight = FontWeight.Bold
         )
+        Spacer(modifier = Modifier.height(16.dp))
+        Image(
+            painter = painterResource(id=viewModel.image),
+            contentDescription=null
+        )
     }
 }
 
@@ -151,6 +198,7 @@ fun AppNavigation(viewModel: ShakeViewModel) {
     val navController = rememberNavController()
 
     NavHost(navController = navController, startDestination = "home") {
+
         composable("home") { Home(navController) }
         composable("game") { Game(navController = navController, viewModel = viewModel) }
     }
