@@ -9,4 +9,11 @@
     <string name="x"> x :</string>
     <string name="y"> y :</string>
     <string name="z"> z :</string>
+    <string name="play_against_bot">Jouer contre un Bot</string>
+    <string name="you_win">Vous avez gagner</string>
+    <string name="you_lost">perdu</string>
+    <string name="draw">egalite</string>
+    <string name="you">Vous</string>
+    <string name="bot">Bot</string>
+    <string name="home">Home</string>
 </resources>

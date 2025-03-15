@@ -1,8 +1,5 @@
 package org.nissya.shifoudubus
 
-import android.hardware.Sensor
-import android.hardware.SensorEvent
-import android.hardware.SensorEventListener
 import android.hardware.SensorManager
 import android.media.MediaPlayer
 import android.os.Bundle
@@ -14,9 +11,6 @@ import org.nissya.shifoudubus.ui.theme.ShiFouDuBusTheme
 
 class MainActivity : ComponentActivity() {
     private lateinit var sensorManager: SensorManager
-    private var sensorEventListener: SensorEventListener? = null
-    private var lastShakeTime: Long = 0
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         val mediaPlayer = MediaPlayer.create(this, R.raw.welcome)
@@ -35,7 +29,14 @@ class MainActivity : ComponentActivity() {
         setContent {
             ShiFouDuBusTheme {
                 val viewModel: ShakeViewModel = viewModel()
-                GameController(viewModel, sensorManager, mediaPlayerPierre, mediaPlayerFeuille, mediaPlayerCiseaux, mediaPlayerMusique)
+                GameController(
+                    viewModel,
+                    sensorManager,
+                    mediaPlayerPierre,
+                    mediaPlayerFeuille,
+                    mediaPlayerCiseaux,
+                    mediaPlayerMusique
+                )
             }
         }
     }
