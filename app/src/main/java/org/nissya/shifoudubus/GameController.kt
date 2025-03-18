@@ -72,37 +72,8 @@ fun GameController(
                             }
 
                             if (viewModel.isGameBot) {
-                                val randomNumberBot = (1..3).random()
-                                when (randomNumberBot) {
-                                    1 -> viewModel.imageBot = R.drawable.cacaillou
-                                    2 -> viewModel.imageBot = R.drawable.arbre
-                                    3 -> viewModel.imageBot = R.drawable.ciseaux
-                                }
-
-
-                                if (randomNumber == randomNumberBot) {
-                                    viewModel.isLose = false
-                                    viewModel.isWin = false
-                                } else if (randomNumber == 2 && randomNumberBot == 1) {
-                                    viewModel.isLose = false
-                                    viewModel.isWin = true
-                                } else if (randomNumber == 3 && randomNumberBot == 1) {
-                                    viewModel.isLose = true
-                                    viewModel.isWin = false
-                                } else if (randomNumber == 1 && randomNumberBot == 2) {
-                                    viewModel.isLose = true
-                                    viewModel.isWin = false
-                                } else if (randomNumber == 3 && randomNumberBot == 2) {
-                                    viewModel.isLose = false
-                                    viewModel.isWin = true
-                                } else if (randomNumber == 1 && randomNumberBot == 3) {
-                                    viewModel.isLose = false
-                                    viewModel.isWin = true
-                                } else if (randomNumber == 2 && randomNumberBot == 3) {
-                                    viewModel.isLose = true
-                                    viewModel.isWin = false
-                                }
-                                navController.navigate("result")
+                                var bot = BotController(3, viewModel, navController)
+                                bot.play()
                             }
                             viewModel.shakeCount = 0
                         }
@@ -123,8 +94,6 @@ fun GameController(
             sensorManager.unregisterListener(sensorEventListener)
         }
     }
-
     AppNavigation(viewModel, navController)
-
 }
 
