@@ -16,4 +16,12 @@
     <string name="you">Vous</string>
     <string name="bot">Bot</string>
     <string name="home">Home</string>
+    <string name="choose_difficulty">Choisissez la difficulté</string>
+    <string name="choose_move">Choisissez votre coup</string>
+    <string name="pierre">Pierre</string>
+    <string name="feuille">Feuille</string>
+    <string name="ciseaux">Ciseaux</string>
+    <string name="random">Aléatoire</string>
+    <string name="normal">Normal</string>
+    <string name="continuer">Continuer</string>
 </resources>

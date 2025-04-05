@@ -11,16 +11,19 @@ import org.nissya.shifoudubus.ui.theme.ShiFouDuBusTheme
 
 class MainActivity : ComponentActivity() {
     private lateinit var sensorManager: SensorManager
+    private lateinit var music: MediaPlayer
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        val mediaPlayer = MediaPlayer.create(this, R.raw.welcome)
-        mediaPlayer?.start()
+        val welcomeSound = MediaPlayer.create(this, R.raw.welcome)
+        welcomeSound?.start()
         val mediaPlayerPierre = MediaPlayer.create(this, R.raw.pierre)
         val mediaPlayerFeuille = MediaPlayer.create(this, R.raw.feuille)
         val mediaPlayerCiseaux = MediaPlayer.create(this, R.raw.ciseaux)
-        val mediaPlayerMusique = MediaPlayer.create(this, R.raw.musique)
-        mediaPlayerMusique.isLooping = true
-        mediaPlayerMusique.setVolume(0.1f, 0.1f)
+        this.music = MediaPlayer.create(this, R.raw.musique)
+        music.isLooping = true
+        music.setVolume(0.1f, 0.1f)
+        music.start()
 
         enableEdgeToEdge()
 
@@ -35,9 +38,19 @@ class MainActivity : ComponentActivity() {
                     mediaPlayerPierre,
                     mediaPlayerFeuille,
                     mediaPlayerCiseaux,
-                    mediaPlayerMusique
                 )
             }
         }
     }
+
+    override fun onStop() {
+        super.onStop()
+        music.pause()
+    }
+
+    override fun onRestart() {
+        super.onRestart()
+        music.start()
+    }
+
 }

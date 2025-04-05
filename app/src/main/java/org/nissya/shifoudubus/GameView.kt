@@ -13,6 +13,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.material3.Button
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.LocalTextStyle
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -20,6 +21,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
@@ -29,7 +31,6 @@ import androidx.navigation.compose.composable
 
 @Composable
 fun Home(navController: NavController, viewModel: ShakeViewModel) {
-    viewModel.isGameBot = false
     viewModel.imageBot = R.drawable.squidgame
     viewModel.image = R.drawable.squidgame
     Column(
@@ -42,13 +43,7 @@ fun Home(navController: NavController, viewModel: ShakeViewModel) {
             modifier = Modifier.padding(bottom = 100.dp)
         )
         Button(
-            onClick = { navController.navigate("selecter") },
-            modifier = Modifier.padding(top = 50.dp)
-        ) {
-            Text(text = stringResource(R.string.play))
-        }
-        Button(
-            onClick = { navController.navigate("selecter") },
+            onClick = { navController.navigate("difficultySelecter") },
             modifier = Modifier.padding(top = 50.dp)
         ) {
             Text(text = stringResource(R.string.play_against_bot))
@@ -58,7 +53,6 @@ fun Home(navController: NavController, viewModel: ShakeViewModel) {
 
 @Composable
 fun Result(navController: NavController, viewModel: ShakeViewModel) {
-    viewModel.isGameBot = false
     Column(
         modifier = Modifier.fillMaxSize(),
         verticalArrangement = Arrangement.Center,
@@ -101,7 +95,20 @@ fun Result(navController: NavController, viewModel: ShakeViewModel) {
             onClick = { navController.navigate("home") },
             modifier = Modifier.padding(top = 50.dp)
         ) {
+            if (viewModel.isWin)
+                viewModel.currentScore += 1
+            viewModel.isContinuing = false
             Text(text = stringResource(R.string.home))
+        }
+        Button(
+            onClick = { navController.navigate("selecter") },
+            modifier = Modifier.padding(top = 50.dp)
+        ) {
+            if (viewModel.isWin)
+                viewModel.currentScore += 1
+            viewModel.isContinuing = true
+            viewModel.lastPlay = viewModel.image
+            Text(text = stringResource(R.string.continuer))
         }
     }
 }
@@ -109,17 +116,11 @@ fun Result(navController: NavController, viewModel: ShakeViewModel) {
 @SuppressLint("DefaultLocale")
 @Composable
 fun GameAgainstBot(viewModel: ShakeViewModel) {
-    viewModel.isGameBot = true
     Column(
         modifier = Modifier.fillMaxSize(),
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        Text(
-            text = stringResource(R.string.welcome),
-            fontSize = 60.sp,
-            fontWeight = FontWeight.Bold
-        )
         Text(
             text = stringResource(R.string.shake_instruction),
             fontSize = 30.sp,
@@ -164,90 +165,135 @@ fun MoveSelecter(navController: NavHostController, viewModel: ShakeViewModel) {
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
+        viewModel.imageBot = R.drawable.squidgame
+        Text(
+            modifier = Modifier.padding(top = 100.dp),
+            style = LocalTextStyle.current.copy(lineHeight = 50.sp),
+            textAlign = TextAlign.Center,
+            text = stringResource(R.string.choose_move),
+            fontSize = 60.sp,
+            fontWeight = FontWeight.Bold
+        )
         Row(
             modifier = Modifier.fillMaxSize(),
             horizontalArrangement = Arrangement.Center,
             verticalAlignment = Alignment.CenterVertically
         ) {
-            IconButton(
-                onClick = {
-                    viewModel.image = R.drawable.arbre; navController.navigate("gameAgainstBot")
-                },
-                modifier = Modifier.size(100.dp)
+            Column(
+                horizontalAlignment = Alignment.CenterHorizontally
             ) {
-                Image(
-                    painter = painterResource(id = R.drawable.arbre),
-                    contentDescription = "Icon Button",
-                )
+                IconButton(
+                    onClick = {
+                        viewModel.image =
+                            R.drawable.cacaillou; navController.navigate("gameAgainstBot")
+                    },
+                    modifier = Modifier.size(100.dp)
+                ) {
+                    Image(
+                        painter = painterResource(id = R.drawable.cacaillou),
+                        contentDescription = "Icon Button",
+                    )
+                }
+                Text(text = stringResource(R.string.pierre))
             }
             Spacer(modifier = Modifier.width(16.dp))
-            IconButton(
-                onClick = {
-                    viewModel.image = R.drawable.cacaillou; navController.navigate("gameAgainstBot")
-                },
-                modifier = Modifier.size(100.dp)
+            Column(
+                horizontalAlignment = Alignment.CenterHorizontally
             ) {
-                Image(
-                    painter = painterResource(id = R.drawable.cacaillou),
-                    contentDescription = "Icon Button",
-                )
+                IconButton(
+                    onClick = {
+                        viewModel.image = R.drawable.arbre; navController.navigate("gameAgainstBot")
+                    },
+                    modifier = Modifier.size(100.dp)
+                ) {
+                    Image(
+                        painter = painterResource(id = R.drawable.arbre),
+                        contentDescription = "Icon Button",
+                    )
+                }
+                Text(text = stringResource(R.string.feuille))
+
             }
             Spacer(modifier = Modifier.width(16.dp))
-            IconButton(
-                onClick = {
-                    viewModel.image = R.drawable.ciseaux; navController.navigate("gameAgainstBot")
-                },
-                modifier = Modifier.size(100.dp)
+            Column(
+                horizontalAlignment = Alignment.CenterHorizontally
             ) {
-                Image(
-                    painter = painterResource(id = R.drawable.ciseaux),
-                    contentDescription = "Icon Button",
-                )
+                IconButton(
+                    onClick = {
+                        viewModel.image =
+                            R.drawable.ciseaux; navController.navigate("gameAgainstBot")
+                    },
+                    modifier = Modifier.size(100.dp)
+                ) {
+                    Image(
+                        painter = painterResource(id = R.drawable.ciseaux),
+                        contentDescription = "Icon Button",
+                    )
+                }
+                Text(text = stringResource(R.string.ciseaux))
             }
+
         }
     }
 }
 
-
 @SuppressLint("DefaultLocale")
 @Composable
-fun Game(viewModel: ShakeViewModel) {
-    viewModel.isGameBot = false
+fun DifficultySelecter(navController: NavHostController, viewModel: ShakeViewModel) {
     Column(
         modifier = Modifier.fillMaxSize(),
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         Text(
-            text = stringResource(R.string.welcome),
-            fontSize = 60.sp,
+            modifier = Modifier.padding(top = 100.dp),
+            style = LocalTextStyle.current.copy(lineHeight = 50.sp),
+            textAlign = TextAlign.Center,
+            text = stringResource(R.string.choose_difficulty),
+            fontSize = 50.sp,
             fontWeight = FontWeight.Bold
         )
-        Spacer(modifier = Modifier.height(16.dp))
-        Text(
-            text = stringResource(R.string.shake_instruction),
-            fontSize = 30.sp,
-            fontWeight = FontWeight.Bold
-        )
-        Spacer(modifier = Modifier.height(16.dp))
-        Text(
-            text = stringResource(R.string.shake) + viewModel.shakeCount,
-            fontSize = 20.sp,
-            fontWeight = FontWeight.Bold
-        )
-        Spacer(modifier = Modifier.height(16.dp))
-        Text(
-            text = stringResource(R.string.x) + String.format("%.1f", viewModel.x) + " " +
-                    stringResource(R.string.y) + String.format("%.1f", viewModel.y) + " " +
-                    stringResource(R.string.z) + String.format("%.1f", viewModel.z),
-            fontSize = 20.sp,
-            fontWeight = FontWeight.Bold
-        )
-        Spacer(modifier = Modifier.height(16.dp))
-        Image(
-            painter = painterResource(id = viewModel.image),
-            contentDescription = null
-        )
+        Row(
+            modifier = Modifier.fillMaxSize(),
+            horizontalArrangement = Arrangement.Center,
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Column(
+                horizontalAlignment = Alignment.CenterHorizontally
+            ) {
+                IconButton(
+                    onClick = {
+                        viewModel.difficulty = Difficulty.RANDOM
+                        navController.navigate("selecter")
+                    },
+                    modifier = Modifier.size(100.dp)
+                ) {
+                    Image(
+                        painter = painterResource(id = R.drawable.gamble),
+                        contentDescription = "Icon Button",
+                    )
+                }
+                Text(text = stringResource(R.string.random))
+            }
+            Spacer(modifier = Modifier.width(16.dp))
+            Column(
+                horizontalAlignment = Alignment.CenterHorizontally
+            ) {
+                IconButton(
+                    onClick = {
+                        viewModel.difficulty = Difficulty.NORMAL
+                        navController.navigate("selecter")
+                    },
+                    modifier = Modifier.size(100.dp)
+                ) {
+                    Image(
+                        painter = painterResource(id = R.drawable.intelligent),
+                        contentDescription = "Icon Button",
+                    )
+                }
+                Text(text = stringResource(R.string.normal))
+            }
+        }
     }
 }
 
@@ -257,9 +303,6 @@ fun AppNavigation(viewModel: ShakeViewModel, navController: NavHostController) {
         composable("home") {
             Home(navController, viewModel)
         }
-        composable("game") {
-            Game(viewModel)
-        }
         composable("gameAgainstBot") {
             GameAgainstBot(viewModel)
         }
@@ -268,6 +311,9 @@ fun AppNavigation(viewModel: ShakeViewModel, navController: NavHostController) {
         }
         composable("selecter") {
             MoveSelecter(navController, viewModel)
+        }
+        composable("difficultySelecter") {
+            DifficultySelecter(navController, viewModel)
         }
     }
 }

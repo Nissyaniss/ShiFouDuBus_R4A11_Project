@@ -22,10 +22,13 @@ class ShakeViewModel : ViewModel() {
     var y by mutableFloatStateOf(0f)
     var z by mutableFloatStateOf(0f)
     var image by mutableIntStateOf(R.drawable.squidgame)
-    var isGameBot by mutableStateOf(false)
     var imageBot by mutableIntStateOf(R.drawable.squidgame)
     var isWin by mutableStateOf(false)
     var isLose by mutableStateOf(false)
+    var difficulty by mutableStateOf(Difficulty.NORMAL)
+    var currentScore by mutableIntStateOf(0)
+    var isContinuing by mutableStateOf(false)
+    var lastPlay by mutableIntStateOf(R.drawable.squidgame)
 }
 
 @Composable
@@ -35,11 +38,9 @@ fun GameController(
     mediaPlayerPierre: MediaPlayer,
     mediaPlayerFeuille: MediaPlayer,
     mediaPlayerCiseaux: MediaPlayer,
-    mediaPlayerMusique: MediaPlayer
 ) {
-    val navController = rememberNavController()// Ce sera bien un NavHostController
+    val navController = rememberNavController() // Ce sera bien un NavHostController
 
-    mediaPlayerMusique.start()
     DisposableEffect(sensorManager) {
         val accelerometer = sensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER)
 
@@ -47,26 +48,30 @@ fun GameController(
             private var lastShakeTime: Long = 0
 
             override fun onSensorChanged(event: SensorEvent) {
-                viewModel.x = event.values[0]
-                viewModel.y = event.values[1]
-                viewModel.z = event.values[2]
-                val acceleration =
-                    sqrt((viewModel.x * viewModel.x + viewModel.y * viewModel.y + viewModel.z * viewModel.z).toDouble())
+                if (navController.currentBackStackEntry?.destination?.route == "gameAgainstBot") {
+                    viewModel.x = event.values[0]
+                    viewModel.y = event.values[1]
+                    viewModel.z = event.values[2]
+                    val acceleration =
+                        sqrt((viewModel.x * viewModel.x + viewModel.y * viewModel.y + viewModel.z * viewModel.z).toDouble())
 
-                val currentTime = System.currentTimeMillis()
-                if (acceleration > 50 && currentTime - lastShakeTime > 300) {
-                    lastShakeTime = currentTime
-                    viewModel.shakeCount += 1
+                    val currentTime = System.currentTimeMillis()
+                    if (acceleration > 50 && currentTime - lastShakeTime > 300) {
+                        lastShakeTime = currentTime
+                        viewModel.shakeCount += 1
 
-                    when (viewModel.shakeCount) {
-                        1 -> mediaPlayerPierre.start()
-                        2 -> mediaPlayerFeuille.start()
-                        3 -> {
-                            if (viewModel.isGameBot) {
-                                var bot = BotController(3, viewModel, navController)
-                                bot.play()
+                        when (viewModel.shakeCount) {
+                            1 -> mediaPlayerPierre.start()
+                            2 -> mediaPlayerFeuille.start()
+                            3 -> {
+                                mediaPlayerCiseaux.start()
+                                if (viewModel.difficulty == Difficulty.NORMAL) {
+                                    BotController(viewModel, navController).play(false)
+                                } else {
+                                    BotController(viewModel, navController).play(true)
+                                }
+                                viewModel.shakeCount = 0
                             }
-                            viewModel.shakeCount = 0
                         }
                     }
                 }
