@@ -4,11 +4,15 @@ import android.annotation.SuppressLint
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.material3.Button
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -38,13 +42,13 @@ fun Home(navController: NavController, viewModel: ShakeViewModel) {
             modifier = Modifier.padding(bottom = 100.dp)
         )
         Button(
-            onClick = { navController.navigate("game") },
+            onClick = { navController.navigate("selecter") },
             modifier = Modifier.padding(top = 50.dp)
         ) {
             Text(text = stringResource(R.string.play))
         }
         Button(
-            onClick = { navController.navigate("gameAgainstBot") },
+            onClick = { navController.navigate("selecter") },
             modifier = Modifier.padding(top = 50.dp)
         ) {
             Text(text = stringResource(R.string.play_against_bot))
@@ -153,6 +157,57 @@ fun GameAgainstBot(viewModel: ShakeViewModel) {
     }
 }
 
+@Composable
+fun MoveSelecter(navController: NavHostController, viewModel: ShakeViewModel) {
+    Column(
+        modifier = Modifier.fillMaxSize(),
+        verticalArrangement = Arrangement.Center,
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
+        Row(
+            modifier = Modifier.fillMaxSize(),
+            horizontalArrangement = Arrangement.Center,
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            IconButton(
+                onClick = {
+                    viewModel.image = R.drawable.arbre; navController.navigate("gameAgainstBot")
+                },
+                modifier = Modifier.size(100.dp)
+            ) {
+                Image(
+                    painter = painterResource(id = R.drawable.arbre),
+                    contentDescription = "Icon Button",
+                )
+            }
+            Spacer(modifier = Modifier.width(16.dp))
+            IconButton(
+                onClick = {
+                    viewModel.image = R.drawable.cacaillou; navController.navigate("gameAgainstBot")
+                },
+                modifier = Modifier.size(100.dp)
+            ) {
+                Image(
+                    painter = painterResource(id = R.drawable.cacaillou),
+                    contentDescription = "Icon Button",
+                )
+            }
+            Spacer(modifier = Modifier.width(16.dp))
+            IconButton(
+                onClick = {
+                    viewModel.image = R.drawable.ciseaux; navController.navigate("gameAgainstBot")
+                },
+                modifier = Modifier.size(100.dp)
+            ) {
+                Image(
+                    painter = painterResource(id = R.drawable.ciseaux),
+                    contentDescription = "Icon Button",
+                )
+            }
+        }
+    }
+}
+
 
 @SuppressLint("DefaultLocale")
 @Composable
@@ -203,18 +258,16 @@ fun AppNavigation(viewModel: ShakeViewModel, navController: NavHostController) {
             Home(navController, viewModel)
         }
         composable("game") {
-            Game(viewModel = viewModel)
+            Game(viewModel)
         }
         composable("gameAgainstBot") {
-            GameAgainstBot(
-                viewModel = viewModel
-            )
+            GameAgainstBot(viewModel)
         }
         composable("result") {
-            Result(
-                navController = navController,
-                viewModel = viewModel
-            )
+            Result(navController, viewModel)
+        }
+        composable("selecter") {
+            MoveSelecter(navController, viewModel)
         }
     }
 }

@@ -62,15 +62,6 @@ fun GameController(
                         1 -> mediaPlayerPierre.start()
                         2 -> mediaPlayerFeuille.start()
                         3 -> {
-                            val randomNumber = (1..3).random()
-
-                            mediaPlayerCiseaux.start()
-                            when (randomNumber) {
-                                1 -> viewModel.image = R.drawable.cacaillou
-                                2 -> viewModel.image = R.drawable.arbre
-                                3 -> viewModel.image = R.drawable.ciseaux
-                            }
-
                             if (viewModel.isGameBot) {
                                 var bot = BotController(3, viewModel, navController)
                                 bot.play()
