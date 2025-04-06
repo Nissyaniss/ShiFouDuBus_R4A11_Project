@@ -15,6 +15,7 @@ class BotController(
         println(viewModel.isWin)
         println(viewModel.isLose)
         if (isRandom) {
+            println("je joue aléatoirement")
             val randomNumber = (1..3).random()
             when (randomNumber) {
                 1 -> viewModel.imageBot = R.drawable.cacaillou

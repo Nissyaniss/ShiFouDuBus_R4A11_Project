@@ -328,7 +328,7 @@ fun DifficultySelecter(navController: NavHostController, viewModel: ShakeViewMod
         Spacer(modifier = Modifier.width(16.dp))
         ChooseButton(
             {
-                viewModel.difficulty = Difficulty.RANDOM
+                viewModel.difficulty = Difficulty.NORMAL
                 navController.navigate("selecter")
             },
             painterResource(R.drawable.intelligent),

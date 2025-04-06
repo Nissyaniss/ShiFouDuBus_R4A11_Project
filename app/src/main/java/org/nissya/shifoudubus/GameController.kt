@@ -62,6 +62,7 @@ fun GameController(
                         sqrt((viewModel.x * viewModel.x + viewModel.y * viewModel.y + viewModel.z * viewModel.z).toDouble())
 
                     val currentTime = System.currentTimeMillis()
+
                     if (acceleration > 50 && currentTime - lastShakeTime > 300) {
                         lastShakeTime = currentTime
                         viewModel.shakeCount += 1
@@ -70,6 +71,7 @@ fun GameController(
                             2 -> mediaPlayerFeuille.start()
                             3 -> {
                                 mediaPlayerCiseaux.start()
+
                                 if (viewModel.difficulty == Difficulty.NORMAL) {
                                     BotController(
                                         viewModel,
