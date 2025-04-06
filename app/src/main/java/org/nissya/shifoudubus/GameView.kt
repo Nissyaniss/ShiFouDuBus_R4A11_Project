@@ -30,6 +30,12 @@ import androidx.navigation.NavController
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
+import androidx.compose.foundation.layout.Box
+import nl.dionsegijn.konfetti.compose.KonfettiView
+import nl.dionsegijn.konfetti.core.Party
+import nl.dionsegijn.konfetti.core.Position
+import nl.dionsegijn.konfetti.core.emitter.Emitter
+import java.util.concurrent.TimeUnit
 
 @Composable
 fun Home(navController: NavController, viewModel: ShakeViewModel) {
@@ -61,83 +67,125 @@ fun Home(navController: NavController, viewModel: ShakeViewModel) {
 
 @Composable
 fun Result(navController: NavController, viewModel: ShakeViewModel) {
-    Column(
-        modifier = Modifier.fillMaxSize(),
-        verticalArrangement = Arrangement.Center,
-        horizontalAlignment = Alignment.CenterHorizontally
-    ) {
-        Text(
-            fontSize = 40.sp,
-            fontWeight = FontWeight.Bold,
-            text = if (viewModel.isWin) {
-                stringResource(R.string.you_win)
-            } else if (viewModel.isLose) {
-                stringResource(R.string.you_lost)
-            } else {
-                stringResource(R.string.draw)
-            },
-            modifier = Modifier.padding(bottom = 50.dp)
-        )
-        Text(text = stringResource(R.string.current_score) + viewModel.currentScore)
-        Text(text = stringResource(R.string.best_score) + viewModel.currentBestScore)
-        Text(
-            text = stringResource(R.string.you),
-            fontSize = 30.sp,
-            fontWeight = FontWeight.Bold
-        )
-        Spacer(modifier = Modifier.height(16.dp))
-        Image(
-            painter = painterResource(id = viewModel.image),
-            contentDescription = null
-        )
-        Spacer(modifier = Modifier.height(16.dp))
-        Text(
-            text = stringResource(R.string.bot),
-            fontSize = 30.sp,
-            fontWeight = FontWeight.Bold
-        )
-        Spacer(modifier = Modifier.height(16.dp))
-        Image(
-            painter = painterResource(id = viewModel.imageBot),
-            contentDescription = null
-        )
-        Button(
-            onClick = {
-                navController.navigate("home")
-                viewModel.isContinuing = false
-                viewModel.lastPlay = R.drawable.squidgame
-                viewModel.currentScore = 0
-            },
-            modifier = Modifier.padding(top = 50.dp)
+    Box(modifier = Modifier.fillMaxSize()) {
+        Column(
+            modifier = Modifier.fillMaxSize(),
+            verticalArrangement = Arrangement.Center,
+            horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            Text(text = stringResource(R.string.home))
-        }
-        if (viewModel.isWin || (!viewModel.isWin && !viewModel.isLose)) {
-            Button(
-                onClick = {
-                    navController.navigate("selecter")
-                    viewModel.isContinuing = true
-                    viewModel.lastPlay = viewModel.image
-                },
-                modifier = Modifier.padding(top = 50.dp)
+            Column(
+                modifier = Modifier.fillMaxSize(),
+                verticalArrangement = Arrangement.Center,
+                horizontalAlignment = Alignment.CenterHorizontally
             ) {
-                Text(text = stringResource(R.string.Continue))
-            }
-        } else if (viewModel.isLose) {
-            Button(
-                onClick = {
-                    navController.navigate("selecter")
-                    viewModel.currentScore = 0
-                    viewModel.isContinuing = false
-                    viewModel.lastPlay = R.drawable.squidgame
-                },
-                modifier = Modifier.padding(top = 50.dp)
-            ) {
-                Text(text = stringResource(R.string.replay))
+                Text(
+                    fontSize = 40.sp,
+                    fontWeight = FontWeight.Bold,
+                    text = if (viewModel.isWin) {
+                        stringResource(R.string.you_win)
+                    } else if (viewModel.isLose) {
+                        stringResource(R.string.you_lost)
+                    } else {
+                        stringResource(R.string.draw)
+                    },
+                    modifier = Modifier.padding(bottom = 50.dp)
+                )
+                Text(text = stringResource(R.string.current_score) + viewModel.currentScore)
+                Text(text = stringResource(R.string.best_score) + viewModel.currentBestScore)
+                Text(
+                    text = stringResource(R.string.you),
+                    fontSize = 30.sp,
+                    fontWeight = FontWeight.Bold
+                )
+                Spacer(modifier = Modifier.height(16.dp))
+                Image(
+                    painter = painterResource(id = viewModel.image),
+                    contentDescription = null
+                )
+                Spacer(modifier = Modifier.height(16.dp))
+                Text(
+                    text = stringResource(R.string.bot),
+                    fontSize = 30.sp,
+                    fontWeight = FontWeight.Bold
+                )
+                Spacer(modifier = Modifier.height(16.dp))
+                Image(
+                    painter = painterResource(id = viewModel.imageBot),
+                    contentDescription = null
+                )
+                Button(
+                    onClick = {
+                        navController.navigate("home")
+                        viewModel.isContinuing = false
+                        viewModel.lastPlay = R.drawable.squidgame
+                        viewModel.currentScore = 0
+                    },
+                    modifier = Modifier.padding(top = 50.dp)
+                ) {
+                    Text(text = stringResource(R.string.home))
+                }
+                if (viewModel.isWin || (!viewModel.isWin && !viewModel.isLose)) {
+                    Button(
+                        onClick = {
+                            navController.navigate("selecter")
+                            viewModel.isContinuing = true
+                            viewModel.lastPlay = viewModel.image
+                        },
+                        modifier = Modifier.padding(top = 50.dp)
+                    ) {
+                        Text(text = stringResource(R.string.Continue))
+                    }
+                } else if (viewModel.isLose) {
+                    Button(
+                        onClick = {
+                            navController.navigate("selecter")
+                            viewModel.currentScore = 0
+                            viewModel.isContinuing = false
+                            viewModel.lastPlay = R.drawable.squidgame
+                        },
+                        modifier = Modifier.padding(top = 50.dp)
+                    ) {
+                        Text(text = stringResource(R.string.replay))
+                    }
+                }
+
             }
         }
 
+        if (viewModel.isWin) {
+            KonfettiView(
+                parties = listOf(
+                    Party(
+                        speed = 0f,
+                        maxSpeed = 30f,
+                        damping = 0.9f,
+                        spread = 360,
+                        colors = listOf(0xfce18a, 0xff726d, 0xf4306d, 0xb48def),
+                        emitter = Emitter(duration = 100, TimeUnit.MILLISECONDS).max(100),
+                        position = Position.Relative(0.5, 0.5)
+                    )
+                ),
+                modifier = Modifier.fillMaxSize()
+            )
+        }
+        if (viewModel.bestScore) {
+            KonfettiView(
+                parties = listOf(
+                    Party(
+                        speed = 0f,
+                        maxSpeed = 30f,
+                        damping = 0.9f,
+                        spread = 720,
+                        colors = listOf(0xfce18a, 0xff726d, 0xf4306d, 0xb48def),
+                        emitter = Emitter(duration = 100, TimeUnit.MILLISECONDS).max(300),
+                        position = Position.Relative(0.5, 0.5)
+                    )
+                ),
+                modifier = Modifier.fillMaxSize()
+            )
+        }
     }
+
 }
 
 @SuppressLint("DefaultLocale")
@@ -191,6 +239,9 @@ fun MoveSelecter(navController: NavHostController, viewModel: ShakeViewModel) {
         Column(
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
+
+
+
             ChooseButton(
                 {
                     viewModel.image = R.drawable.cacaillou
@@ -212,6 +263,7 @@ fun MoveSelecter(navController: NavHostController, viewModel: ShakeViewModel) {
                 painter = painterResource(id = R.drawable.arbre),
                 stringResource(R.string.leaf)
             )
+
         }
         Spacer(modifier = Modifier.width(16.dp))
         Column(
@@ -223,10 +275,15 @@ fun MoveSelecter(navController: NavHostController, viewModel: ShakeViewModel) {
                     navController.navigate("gameAgainstBot")
                 },
                 painter = painterResource(id = R.drawable.ciseaux),
+
                 stringResource(R.string.scissors)
+
+
             )
         }
+
     }
+
 }
 
 @Composable
@@ -322,5 +379,7 @@ fun AppNavigation(viewModel: ShakeViewModel, navController: NavHostController) {
         }
     }
 }
+
+
 
 

@@ -31,6 +31,8 @@ class ShakeViewModel : ViewModel() {
     var currentScore by mutableIntStateOf(0)
     var isContinuing by mutableStateOf(false)
     var lastPlay by mutableIntStateOf(R.drawable.squidgame)
+    var bestScore by mutableStateOf(false)
+
 }
 
 @Composable
