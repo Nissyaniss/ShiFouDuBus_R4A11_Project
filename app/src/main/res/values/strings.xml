@@ -18,13 +18,13 @@
     <string name="home">Home</string>
     <string name="choose_difficulty">Choisissez la difficulté</string>
     <string name="choose_move">Choisissez votre coup</string>
-    <string name="pierre">Pierre</string>
-    <string name="feuille">Feuille</string>
-    <string name="ciseaux">Ciseaux</string>
+    <string name="stone">Pierre</string>
+    <string name="leaf">Feuille</string>
+    <string name="scissors">Ciseaux</string>
     <string name="random">Aléatoire</string>
     <string name="normal">Normal</string>
-    <string name="continuer">Continuer</string>
-    <string name="rejouer">Rejouer</string>
+    <string name="Continue">Continuer</string>
+    <string name="replay">Rejouer</string>
     <string name="current_score">"Score actuel = "</string>
     <string name="best_score">"Meilleur Score = "</string>
 </resources>

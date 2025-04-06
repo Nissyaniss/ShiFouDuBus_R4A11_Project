@@ -5,6 +5,7 @@ import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
@@ -18,6 +19,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
@@ -40,10 +42,12 @@ fun Home(navController: NavController, viewModel: ShakeViewModel) {
     ) {
         Text(
             text = stringResource(R.string.gameTitle),
-            modifier = Modifier.padding(bottom = 100.dp)
+            fontSize = 50.sp,
+            fontWeight = FontWeight.Bold,
+            modifier = Modifier.padding(bottom = 20.dp)
         )
         Text(
-            text = "Meilleur score = " + viewModel.currentBestScore,
+            text = stringResource(R.string.best_score) + viewModel.currentBestScore,
             modifier = Modifier.padding(bottom = 100.dp)
         )
         Button(
@@ -117,7 +121,7 @@ fun Result(navController: NavController, viewModel: ShakeViewModel) {
                 },
                 modifier = Modifier.padding(top = 50.dp)
             ) {
-                Text(text = stringResource(R.string.continuer))
+                Text(text = stringResource(R.string.Continue))
             }
         } else if (viewModel.isLose) {
             Button(
@@ -129,7 +133,7 @@ fun Result(navController: NavController, viewModel: ShakeViewModel) {
                 },
                 modifier = Modifier.padding(top = 50.dp)
             ) {
-                Text(text = stringResource(R.string.rejouer))
+                Text(text = stringResource(R.string.replay))
             }
         }
 
@@ -183,140 +187,118 @@ fun GameAgainstBot(viewModel: ShakeViewModel) {
 
 @Composable
 fun MoveSelecter(navController: NavHostController, viewModel: ShakeViewModel) {
-    Column(
-        modifier = Modifier.fillMaxSize(),
-        verticalArrangement = Arrangement.Center,
-        horizontalAlignment = Alignment.CenterHorizontally
-    ) {
-        viewModel.imageBot = R.drawable.squidgame
-        Text(
-            modifier = Modifier.padding(top = 100.dp),
-            style = LocalTextStyle.current.copy(lineHeight = 50.sp),
-            textAlign = TextAlign.Center,
-            text = stringResource(R.string.choose_move),
-            fontSize = 60.sp,
-            fontWeight = FontWeight.Bold
-        )
-        Row(
-            modifier = Modifier.fillMaxSize(),
-            horizontalArrangement = Arrangement.Center,
-            verticalAlignment = Alignment.CenterVertically
+    Selecter(stringResource(R.string.choose_move)) {
+        Column(
+            horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            Column(
-                horizontalAlignment = Alignment.CenterHorizontally
-            ) {
-                IconButton(
-                    onClick = {
-                        viewModel.image =
-                            R.drawable.cacaillou; navController.navigate("gameAgainstBot")
-                    },
-                    modifier = Modifier.size(100.dp)
-                ) {
-                    Image(
-                        painter = painterResource(id = R.drawable.cacaillou),
-                        contentDescription = "Icon Button",
-                    )
-                }
-                Text(text = stringResource(R.string.pierre))
-            }
-            Spacer(modifier = Modifier.width(16.dp))
-            Column(
-                horizontalAlignment = Alignment.CenterHorizontally
-            ) {
-                IconButton(
-                    onClick = {
-                        viewModel.image = R.drawable.arbre; navController.navigate("gameAgainstBot")
-                    },
-                    modifier = Modifier.size(100.dp)
-                ) {
-                    Image(
-                        painter = painterResource(id = R.drawable.arbre),
-                        contentDescription = "Icon Button",
-                    )
-                }
-                Text(text = stringResource(R.string.feuille))
-
-            }
-            Spacer(modifier = Modifier.width(16.dp))
-            Column(
-                horizontalAlignment = Alignment.CenterHorizontally
-            ) {
-                IconButton(
-                    onClick = {
-                        viewModel.image =
-                            R.drawable.ciseaux; navController.navigate("gameAgainstBot")
-                    },
-                    modifier = Modifier.size(100.dp)
-                ) {
-                    Image(
-                        painter = painterResource(id = R.drawable.ciseaux),
-                        contentDescription = "Icon Button",
-                    )
-                }
-                Text(text = stringResource(R.string.ciseaux))
-            }
-
+            ChooseButton(
+                {
+                    viewModel.image = R.drawable.cacaillou
+                    navController.navigate("gameAgainstBot")
+                },
+                painter = painterResource(id = R.drawable.cacaillou),
+                stringResource(R.string.stone)
+            )
+        }
+        Spacer(modifier = Modifier.width(16.dp))
+        Column(
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
+            ChooseButton(
+                {
+                    viewModel.image = R.drawable.arbre
+                    navController.navigate("gameAgainstBot")
+                },
+                painter = painterResource(id = R.drawable.arbre),
+                stringResource(R.string.leaf)
+            )
+        }
+        Spacer(modifier = Modifier.width(16.dp))
+        Column(
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
+            ChooseButton(
+                {
+                    viewModel.image = R.drawable.ciseaux
+                    navController.navigate("gameAgainstBot")
+                },
+                painter = painterResource(id = R.drawable.ciseaux),
+                stringResource(R.string.scissors)
+            )
         }
     }
 }
 
-@SuppressLint("DefaultLocale")
 @Composable
-fun DifficultySelecter(navController: NavHostController, viewModel: ShakeViewModel) {
+fun Selecter(
+    title: String,
+    content: @Composable RowScope.() -> Unit
+) {
     Column(
         modifier = Modifier.fillMaxSize(),
         verticalArrangement = Arrangement.Center,
-        horizontalAlignment = Alignment.CenterHorizontally
+        horizontalAlignment = Alignment.CenterHorizontally,
     ) {
         Text(
             modifier = Modifier.padding(top = 100.dp),
             style = LocalTextStyle.current.copy(lineHeight = 50.sp),
             textAlign = TextAlign.Center,
-            text = stringResource(R.string.choose_difficulty),
+            text = title,
             fontSize = 50.sp,
             fontWeight = FontWeight.Bold
         )
         Row(
             modifier = Modifier.fillMaxSize(),
             horizontalArrangement = Arrangement.Center,
-            verticalAlignment = Alignment.CenterVertically
+            verticalAlignment = Alignment.CenterVertically,
+            content = content
+        )
+    }
+}
+
+@SuppressLint("DefaultLocale")
+@Composable
+fun DifficultySelecter(navController: NavHostController, viewModel: ShakeViewModel) {
+    Selecter(stringResource(R.string.choose_difficulty)) {
+        ChooseButton(
+            {
+                viewModel.difficulty = Difficulty.RANDOM
+                navController.navigate("selecter")
+            },
+            painterResource(id = R.drawable.gamble),
+            stringResource(R.string.random)
+        )
+        Spacer(modifier = Modifier.width(16.dp))
+        ChooseButton(
+            {
+                viewModel.difficulty = Difficulty.RANDOM
+                navController.navigate("selecter")
+            },
+            painterResource(R.drawable.intelligent),
+            stringResource(R.string.normal)
+        )
+    }
+}
+
+@Composable
+fun ChooseButton(
+    onClick: () -> Unit,
+    painter: Painter,
+    text: String,
+) {
+    Column(
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
+        IconButton(
+            onClick = onClick,
+            modifier = Modifier.size(100.dp)
         ) {
-            Column(
-                horizontalAlignment = Alignment.CenterHorizontally
-            ) {
-                IconButton(
-                    onClick = {
-                        viewModel.difficulty = Difficulty.RANDOM
-                        navController.navigate("selecter")
-                    },
-                    modifier = Modifier.size(100.dp)
-                ) {
-                    Image(
-                        painter = painterResource(id = R.drawable.gamble),
-                        contentDescription = "Icon Button",
-                    )
-                }
-                Text(text = stringResource(R.string.random))
-            }
-            Spacer(modifier = Modifier.width(16.dp))
-            Column(
-                horizontalAlignment = Alignment.CenterHorizontally
-            ) {
-                IconButton(
-                    onClick = {
-                        viewModel.difficulty = Difficulty.NORMAL
-                        navController.navigate("selecter")
-                    },
-                    modifier = Modifier.size(100.dp)
-                ) {
-                    Image(
-                        painter = painterResource(id = R.drawable.intelligent),
-                        contentDescription = "Icon Button",
-                    )
-                }
-                Text(text = stringResource(R.string.normal))
-            }
+            Image(
+                painter = painter,
+                contentDescription = "Icon Button",
+            )
         }
+        Text(text)
     }
 }
 
