@@ -44,6 +44,7 @@ fun GameController(
     mediaPlayerFeuille: MediaPlayer,
     mediaPlayerCiseaux: MediaPlayer,
     mediaPlayerYippee: MediaPlayer,
+    mediaPlayerWomp: MediaPlayer,
     sharedPref: SharedPreferences
 ) {
     val navController = rememberNavController()
@@ -74,12 +75,14 @@ fun GameController(
                             3 -> {
                                 mediaPlayerCiseaux.start()
                                 if (viewModel.difficulty == Difficulty.NORMAL) {
-                                    if (viewModel.currentScore == 0) {
+                                    if (viewModel.currentBestScore == 0) {
                                         BotController(
                                             viewModel,
                                             navController,
                                             mediaPlayerYippee,
+                                            mediaPlayerWomp,
                                             sharedPref
+
                                         ).play(
                                             true
                                         )
@@ -88,6 +91,7 @@ fun GameController(
                                             viewModel,
                                             navController,
                                             mediaPlayerYippee,
+                                            mediaPlayerWomp,
                                             sharedPref
                                         ).play(
                                             false
@@ -98,6 +102,7 @@ fun GameController(
                                         viewModel,
                                         navController,
                                         mediaPlayerYippee,
+                                        mediaPlayerWomp,
                                         sharedPref
                                     ).play(
                                         true

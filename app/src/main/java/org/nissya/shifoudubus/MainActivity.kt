@@ -31,6 +31,7 @@ class MainActivity : ComponentActivity() {
         val mediaPlayerFeuille = MediaPlayer.create(this, R.raw.feuille)
         val mediaPlayerCiseaux = MediaPlayer.create(this, R.raw.ciseaux)
         val mediaPlayerYippee = MediaPlayer.create(this, R.raw.yippee)
+        val mediaPlayerWomp = MediaPlayer.create(this, R.raw.womp)
         this.music = MediaPlayer.create(this, R.raw.musique)
         music.isLooping = true
         music.setVolume(0.1f, 0.1f)
@@ -51,6 +52,7 @@ class MainActivity : ComponentActivity() {
                     mediaPlayerFeuille,
                     mediaPlayerCiseaux,
                     mediaPlayerYippee,
+                    mediaPlayerWomp,
                     sharedPref
                 )
             }

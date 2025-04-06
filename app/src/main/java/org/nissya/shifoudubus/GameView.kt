@@ -152,7 +152,7 @@ fun Result(navController: NavController, viewModel: ShakeViewModel) {
             }
         }
 
-        if (viewModel.isWin) {
+        if (viewModel.isWin && !viewModel.bestScore) {
             KonfettiView(
                 parties = listOf(
                     Party(
@@ -160,7 +160,7 @@ fun Result(navController: NavController, viewModel: ShakeViewModel) {
                         maxSpeed = 30f,
                         damping = 0.9f,
                         spread = 360,
-                        colors = listOf(0xfce18a, 0xff726d, 0xf4306d, 0xb48def),
+                        colors = listOf(0xfce18a,  0xff726d),
                         emitter = Emitter(duration = 100, TimeUnit.MILLISECONDS).max(100),
                         position = Position.Relative(0.5, 0.5)
                     )
@@ -175,9 +175,9 @@ fun Result(navController: NavController, viewModel: ShakeViewModel) {
                         speed = 0f,
                         maxSpeed = 30f,
                         damping = 0.9f,
-                        spread = 720,
+                        spread = 700,
                         colors = listOf(0xfce18a, 0xff726d, 0xf4306d, 0xb48def),
-                        emitter = Emitter(duration = 100, TimeUnit.MILLISECONDS).max(300),
+                        emitter = Emitter(duration = 1000, TimeUnit.MILLISECONDS).max(1000),
                         position = Position.Relative(0.5, 0.5)
                     )
                 ),
@@ -328,6 +328,7 @@ fun DifficultySelecter(navController: NavHostController, viewModel: ShakeViewMod
         ChooseButton(
             {
                 viewModel.difficulty = Difficulty.NORMAL
+                
                 navController.navigate("selecter")
             },
             painterResource(R.drawable.intelligent),

@@ -8,11 +8,14 @@ class BotController(
     private var viewModel: ShakeViewModel,
     private var navController: NavHostController,
     private var mediaPlayerYippee: MediaPlayer,
+    private var mediaPlayerWomp: MediaPlayer,
     private var sharedPref: SharedPreferences
 ) {
 
     fun play(isRandom: Boolean) {
+        viewModel.bestScore = false
         if (isRandom) {
+
             val randomNumber = (1..3).random()
             when (randomNumber) {
                 1 -> viewModel.imageBot = R.drawable.cacaillou
@@ -20,13 +23,15 @@ class BotController(
                 3 -> viewModel.imageBot = R.drawable.ciseaux
             }
         } else {
-            if (viewModel.isWin) {
+            if (viewModel.isWin || viewModel.isLose ) {
+
                 if (viewModel.currentImage == 0) {
                     viewModel.currentImage = 2
                 } else {
                     viewModel.currentImage -= 1
                 }
             } else if (!viewModel.isWin && !viewModel.isLose) {
+
                 if (viewModel.currentImage == 2) {
                     viewModel.currentImage = 0
                 } else {
@@ -62,14 +67,17 @@ class BotController(
         if (viewModel.isWin) {
             viewModel.currentScore += 1
             if (viewModel.currentScore > viewModel.currentBestScore) {
+                viewModel.bestScore = true
                 viewModel.currentBestScore = viewModel.currentScore
                 mediaPlayerYippee.start()
-                viewModel.bestScore = true
+
                 with(sharedPref.edit()) {
                     putInt("bestScore", viewModel.currentBestScore)
                     commit()
                 }
             }
+        }else{
+            mediaPlayerWomp.start()
         }
         navController.navigate("result")
     }
