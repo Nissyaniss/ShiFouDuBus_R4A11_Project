@@ -32,7 +32,8 @@ class ShakeViewModel : ViewModel() {
     var isContinuing by mutableStateOf(false)
     var lastPlay by mutableIntStateOf(R.drawable.squidgame)
     var bestScore by mutableStateOf(false)
-
+    var imageTab = arrayOf(R.drawable.cacaillou, R.drawable.arbre, R.drawable.ciseaux)
+    var currentImage by mutableIntStateOf(0)
 }
 
 @Composable
@@ -55,6 +56,7 @@ fun GameController(
 
             override fun onSensorChanged(event: SensorEvent) {
                 if (navController.currentBackStackEntry?.destination?.route == "gameAgainstBot") {
+                    viewModel.imageBot = R.drawable.squidgame
                     viewModel.x = event.values[0]
                     viewModel.y = event.values[1]
                     viewModel.z = event.values[2]
@@ -71,16 +73,26 @@ fun GameController(
                             2 -> mediaPlayerFeuille.start()
                             3 -> {
                                 mediaPlayerCiseaux.start()
-
                                 if (viewModel.difficulty == Difficulty.NORMAL) {
-                                    BotController(
-                                        viewModel,
-                                        navController,
-                                        mediaPlayerYippee,
-                                        sharedPref
-                                    ).play(
-                                        false
-                                    )
+                                    if (viewModel.currentScore == 0) {
+                                        BotController(
+                                            viewModel,
+                                            navController,
+                                            mediaPlayerYippee,
+                                            sharedPref
+                                        ).play(
+                                            true
+                                        )
+                                    } else {
+                                        BotController(
+                                            viewModel,
+                                            navController,
+                                            mediaPlayerYippee,
+                                            sharedPref
+                                        ).play(
+                                            false
+                                        )
+                                    }
                                 } else {
                                     BotController(
                                         viewModel,

@@ -20,19 +20,22 @@ class BotController(
                 3 -> viewModel.imageBot = R.drawable.ciseaux
             }
         } else {
-            if (!viewModel.isWin && !viewModel.isLose) {
-                this.play(true)
-                return
-            } else {
-                if (viewModel.isWin) {
-                    when (viewModel.lastPlay) {
-                        R.drawable.arbre -> viewModel.imageBot = R.drawable.ciseaux
-                        R.drawable.cacaillou -> viewModel.imageBot = R.drawable.arbre
-                        R.drawable.ciseaux -> viewModel.imageBot = R.drawable.cacaillou
-                    }
+            if (viewModel.isWin) {
+                if (viewModel.currentImage == 0) {
+                    viewModel.currentImage = 2
+                } else {
+                    viewModel.currentImage -= 1
+                }
+            } else if (!viewModel.isWin && !viewModel.isLose) {
+                if (viewModel.currentImage == 2) {
+                    viewModel.currentImage = 0
+                } else {
+                    viewModel.currentImage += 1
                 }
             }
+            viewModel.imageBot = viewModel.imageTab[viewModel.currentImage]
         }
+
         if (viewModel.image == viewModel.imageBot) {
             viewModel.isLose = false
             viewModel.isWin = false

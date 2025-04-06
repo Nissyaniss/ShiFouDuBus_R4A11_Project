@@ -3,6 +3,7 @@ package org.nissya.shifoudubus
 import android.annotation.SuppressLint
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.RowScope
@@ -30,7 +31,6 @@ import androidx.navigation.NavController
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
-import androidx.compose.foundation.layout.Box
 import nl.dionsegijn.konfetti.compose.KonfettiView
 import nl.dionsegijn.konfetti.core.Party
 import nl.dionsegijn.konfetti.core.Position
@@ -239,7 +239,6 @@ fun MoveSelecter(navController: NavHostController, viewModel: ShakeViewModel) {
         Column(
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-
 
 
             ChooseButton(
