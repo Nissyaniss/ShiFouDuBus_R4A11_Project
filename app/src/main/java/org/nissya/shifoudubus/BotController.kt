@@ -1,10 +1,14 @@
 package org.nissya.shifoudubus
 
+import android.content.SharedPreferences
+import android.media.MediaPlayer
 import androidx.navigation.NavHostController
 
 class BotController(
     private var viewModel: ShakeViewModel,
-    private var navController: NavHostController
+    private var navController: NavHostController,
+    private var mediaPlayerYippee: MediaPlayer,
+    private var sharedPref: SharedPreferences
 ) {
 
     fun play(isRandom: Boolean) {
@@ -16,19 +20,17 @@ class BotController(
                 3 -> viewModel.imageBot = R.drawable.ciseaux
             }
         } else {
-            if (viewModel.lastPlay == R.drawable.squidgame) {
+            if (!viewModel.isWin && !viewModel.isLose) {
+                println("hey pas bien")
                 this.play(true)
+                return
             } else {
-                if (viewModel.isLose) {
-                    viewModel.imageBot = viewModel.lastPlay
-                } else if (viewModel.isWin) {
+                if (viewModel.isWin) {
                     when (viewModel.lastPlay) {
                         R.drawable.arbre -> viewModel.imageBot = R.drawable.ciseaux
                         R.drawable.cacaillou -> viewModel.imageBot = R.drawable.arbre
                         R.drawable.ciseaux -> viewModel.imageBot = R.drawable.cacaillou
                     }
-                } else {
-                    this.play(true)
                 }
             }
         }
@@ -53,6 +55,19 @@ class BotController(
         } else if (viewModel.image == R.drawable.arbre && viewModel.imageBot == R.drawable.ciseaux) {
             viewModel.isLose = true
             viewModel.isWin = false
+        }
+
+        if (viewModel.isWin) {
+            viewModel.currentScore += 1
+            println("hey " + viewModel.currentScore)
+            if (viewModel.currentScore > viewModel.currentBestScore) {
+                viewModel.currentBestScore = viewModel.currentScore
+                mediaPlayerYippee.start()
+                with(sharedPref.edit()) {
+                    putInt("bestScore", viewModel.currentBestScore)
+                    commit()
+                }
+            }
         }
         navController.navigate("result")
     }

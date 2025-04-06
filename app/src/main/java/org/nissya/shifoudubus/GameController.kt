@@ -1,5 +1,6 @@
 package org.nissya.shifoudubus
 
+import android.content.SharedPreferences
 import android.hardware.Sensor
 import android.hardware.SensorEvent
 import android.hardware.SensorEventListener
@@ -26,6 +27,7 @@ class ShakeViewModel : ViewModel() {
     var isWin by mutableStateOf(false)
     var isLose by mutableStateOf(false)
     var difficulty by mutableStateOf(Difficulty.NORMAL)
+    var currentBestScore by mutableIntStateOf(0)
     var currentScore by mutableIntStateOf(0)
     var isContinuing by mutableStateOf(false)
     var lastPlay by mutableIntStateOf(R.drawable.squidgame)
@@ -38,8 +40,10 @@ fun GameController(
     mediaPlayerPierre: MediaPlayer,
     mediaPlayerFeuille: MediaPlayer,
     mediaPlayerCiseaux: MediaPlayer,
+    mediaPlayerYippee: MediaPlayer,
+    sharedPref: SharedPreferences
 ) {
-    val navController = rememberNavController() // Ce sera bien un NavHostController
+    val navController = rememberNavController()
 
     DisposableEffect(sensorManager) {
         val accelerometer = sensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER)
@@ -59,16 +63,29 @@ fun GameController(
                     if (acceleration > 50 && currentTime - lastShakeTime > 300) {
                         lastShakeTime = currentTime
                         viewModel.shakeCount += 1
-
                         when (viewModel.shakeCount) {
                             1 -> mediaPlayerPierre.start()
                             2 -> mediaPlayerFeuille.start()
                             3 -> {
                                 mediaPlayerCiseaux.start()
                                 if (viewModel.difficulty == Difficulty.NORMAL) {
-                                    BotController(viewModel, navController).play(false)
+                                    BotController(
+                                        viewModel,
+                                        navController,
+                                        mediaPlayerYippee,
+                                        sharedPref
+                                    ).play(
+                                        false
+                                    )
                                 } else {
-                                    BotController(viewModel, navController).play(true)
+                                    BotController(
+                                        viewModel,
+                                        navController,
+                                        mediaPlayerYippee,
+                                        sharedPref
+                                    ).play(
+                                        true
+                                    )
                                 }
                                 viewModel.shakeCount = 0
                             }

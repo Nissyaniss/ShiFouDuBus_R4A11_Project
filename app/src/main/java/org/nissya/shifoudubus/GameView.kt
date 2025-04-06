@@ -42,6 +42,10 @@ fun Home(navController: NavController, viewModel: ShakeViewModel) {
             text = stringResource(R.string.gameTitle),
             modifier = Modifier.padding(bottom = 100.dp)
         )
+        Text(
+            text = "Meilleur score = " + viewModel.currentBestScore,
+            modifier = Modifier.padding(bottom = 100.dp)
+        )
         Button(
             onClick = { navController.navigate("difficultySelecter") },
             modifier = Modifier.padding(top = 50.dp)
@@ -68,8 +72,10 @@ fun Result(navController: NavController, viewModel: ShakeViewModel) {
             } else {
                 stringResource(R.string.draw)
             },
-            modifier = Modifier.padding(bottom = 100.dp)
+            modifier = Modifier.padding(bottom = 50.dp)
         )
+        Text(text = stringResource(R.string.current_score) + viewModel.currentScore)
+        Text(text = stringResource(R.string.best_score) + viewModel.currentBestScore)
         Text(
             text = stringResource(R.string.you),
             fontSize = 30.sp,
@@ -92,24 +98,41 @@ fun Result(navController: NavController, viewModel: ShakeViewModel) {
             contentDescription = null
         )
         Button(
-            onClick = { navController.navigate("home") },
+            onClick = {
+                navController.navigate("home")
+                viewModel.isContinuing = false
+                viewModel.lastPlay = R.drawable.squidgame
+                viewModel.currentScore = 0
+            },
             modifier = Modifier.padding(top = 50.dp)
         ) {
-            if (viewModel.isWin)
-                viewModel.currentScore += 1
-            viewModel.isContinuing = false
             Text(text = stringResource(R.string.home))
         }
-        Button(
-            onClick = { navController.navigate("selecter") },
-            modifier = Modifier.padding(top = 50.dp)
-        ) {
-            if (viewModel.isWin)
-                viewModel.currentScore += 1
-            viewModel.isContinuing = true
-            viewModel.lastPlay = viewModel.image
-            Text(text = stringResource(R.string.continuer))
+        if (viewModel.isWin || (!viewModel.isWin && !viewModel.isLose)) {
+            Button(
+                onClick = {
+                    navController.navigate("selecter")
+                    viewModel.isContinuing = true
+                    viewModel.lastPlay = viewModel.image
+                },
+                modifier = Modifier.padding(top = 50.dp)
+            ) {
+                Text(text = stringResource(R.string.continuer))
+            }
+        } else if (viewModel.isLose) {
+            Button(
+                onClick = {
+                    navController.navigate("selecter")
+                    viewModel.currentScore = 0
+                    viewModel.isContinuing = false
+                    viewModel.lastPlay = R.drawable.squidgame
+                },
+                modifier = Modifier.padding(top = 50.dp)
+            ) {
+                Text(text = stringResource(R.string.rejouer))
+            }
         }
+
     }
 }
 

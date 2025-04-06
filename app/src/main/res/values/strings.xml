@@ -24,4 +24,7 @@
     <string name="random">Aléatoire</string>
     <string name="normal">Normal</string>
     <string name="continuer">Continuer</string>
+    <string name="rejouer">Rejouer</string>
+    <string name="current_score">"Score actuel = "</string>
+    <string name="best_score">"Meilleur Score = "</string>
 </resources>
