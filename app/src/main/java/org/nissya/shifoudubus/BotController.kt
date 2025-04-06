@@ -12,10 +12,7 @@ class BotController(
 ) {
 
     fun play(isRandom: Boolean) {
-        println(viewModel.isWin)
-        println(viewModel.isLose)
         if (isRandom) {
-            println("je joue aléatoirement")
             val randomNumber = (1..3).random()
             when (randomNumber) {
                 1 -> viewModel.imageBot = R.drawable.cacaillou
@@ -24,12 +21,10 @@ class BotController(
             }
         } else {
             if (!viewModel.isWin && !viewModel.isLose) {
-                println("il y a égalité")
                 this.play(true)
                 return
             } else {
                 if (viewModel.isWin) {
-                    println("victoire")
                     when (viewModel.lastPlay) {
                         R.drawable.arbre -> viewModel.imageBot = R.drawable.ciseaux
                         R.drawable.cacaillou -> viewModel.imageBot = R.drawable.arbre
@@ -63,11 +58,10 @@ class BotController(
 
         if (viewModel.isWin) {
             viewModel.currentScore += 1
-            println("hey " + viewModel.currentScore)
             if (viewModel.currentScore > viewModel.currentBestScore) {
                 viewModel.currentBestScore = viewModel.currentScore
                 mediaPlayerYippee.start()
-                viewModel.bestScore=true
+                viewModel.bestScore = true
                 with(sharedPref.edit()) {
                     putInt("bestScore", viewModel.currentBestScore)
                     commit()
